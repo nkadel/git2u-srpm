@@ -226,8 +226,8 @@ BuildRequires:  subversion-perl
 BuildRequires:  time
 %endif # with tests
 
-Requires:       git-core = %{version}-%{release}
-Requires:       git-core-doc = %{version}-%{release}
+Requires:       %{name}-core = %{version}-%{release}
+Requires:       %{name}-core-doc = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif # ! defined perl_bootstrap
@@ -252,6 +252,10 @@ Obsoletes:      git-gnome-keyring < 2.11.1-4
 Obsoletes:      git-p4 < %{?epoch:%{epoch}:}%{version}-%{release}
 %endif # without p4
 
+Provides:       git = %{version}-%{release}
+Provides:       git%{?_isa} = %{version}-%{release}
+Conflicts:      git < %{version}
+
 %description
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -264,26 +268,30 @@ tools for integrating with other SCMs, install the git-all meta-package.
 %package all
 Summary:        Meta-package to pull in all git tools
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 %if %{with cvs}
-Requires:       git-cvs = %{version}-%{release}
+Requires:       %{name}-cvs = %{version}-%{release}
 %endif # with cvs
-Requires:       git-email = %{version}-%{release}
-Requires:       git-gui = %{version}-%{release}
+Requires:       %{name}-email = %{version}-%{release}
+Requires:       %{name}-gui = %{version}-%{release}
 %if %{with p4}
-Requires:       git-p4 = %{version}-%{release}
+Requires:       %{name}-p4 = %{version}-%{release}
 %endif # with p4
-Requires:       git-subtree = %{version}-%{release}
-Requires:       git-svn = %{version}-%{release}
-Requires:       git-instaweb = %{version}-%{release}
-Requires:       gitk = %{version}-%{release}
+Requires:       %{name}-subtree = %{version}-%{release}
+Requires:       %{name}-svn = %{version}-%{release}
+Requires:       %{name}-instaweb = %{version}-%{release}
+Requires:       %{name}-gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif # ! defined perl_bootstrap
 %if ! %{emacs_filesystem}
-Requires:       emacs-git = %{version}-%{release}
+Requires:       %{name}-emacs-git = %{version}-%{release}
 %endif # ! emacs_filesystem
+Requires:       %{name}-emacs-git = %{version}-%{release}
+Provides:       git-all = %{version}-%{release}
+Conflicts:      git-all < %{version}
+
 %description all
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -296,6 +304,10 @@ Summary:        Core package of git with minimal functionality
 Requires:       less
 Requires:       openssh-clients
 Requires:       zlib >= 1.2
+Provides:       git-core = %{version}-%{release}
+Provides:       git-core%{?_isa} = %{version}-%{release}
+Conflicts:      git-core < %{version}
+
 %description core
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -309,7 +321,10 @@ other SCMs, install the git-all meta-package.
 %package core-doc
 Summary:        Documentation files for git-core
 BuildArch:      noarch
-Requires:       git-core = %{version}-%{release}
+Requires:       %{name}-core = %{version}-%{release}
+Provides:       git-core-doc = %{version}-%{release}
+Conflicts:      git-core-doc < %{version}
+
 %description core-doc
 Documentation files for git-core package including man pages.
 
@@ -317,17 +332,24 @@ Documentation files for git-core package including man pages.
 %package cvs
 Summary:        Git tools for importing CVS repositories
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 Requires:       cvs
 Requires:       cvsps
 Requires:       perl(DBD::SQLite)
+Provides:       git-cvs = %{version}-%{release}
+Conflicts:      git-cvs < %{version}
+
 %description cvs
 %{summary}.
 %endif # with cvs
 
 %package daemon
 Summary:        Git protocol daemon
-Requires:       git-core = %{version}-%{release}
+Requires:       %{name}-core = %{version}-%{release}
+Provides:       git-daemon = %{version}-%{release}
+Provides:       git-daemon%{?_isa} = %{version}-%{release}
+Conflicts:      git-daemon < %{version}
+
 %if %{use_systemd}
 Requires:       systemd
 Requires(post): systemd
@@ -342,53 +364,76 @@ The git daemon for supporting git:// access to git repositories
 %package email
 Summary:        Git tools for sending patches via email
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 Requires:       perl(Authen::SASL)
 Requires:       perl(Net::SMTP::SSL)
+Provides:       git-email = %{version}-%{release}
+Conflicts:      git-email < %{version}
+
 %description email
 %{summary}.
 
 %if ! %{emacs_filesystem}
-%package -n emacs-git
+%package emacs-git
 Summary:        Git version control system support for Emacs
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 BuildArch:      noarch
 Requires:       emacs(bin) >= %{_emacs_version}
 Obsoletes:      emacs-git-el < 2.18.0-0.0
 Provides:       emacs-git-el = %{version}-%{release}
-%description -n emacs-git
+Provides:       git-emacs-git = %{version}-%{release}
+Conflicts:      git-emacs-git < %{version}
+Provides:       emacs-git = %{version}-%{release}
+Conflicts:      emacs-git
+
+%description emacs-git
 %{summary}.
 %endif # ! emacs_filesystem
 
-%package -n gitk
+%package gitk
 Summary:        Git repository browser
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 Requires:       tk >= 8.4
-%description -n gitk
+Provides:       git-gitk = %{version}-%{release}
+Conflicts:      git-gitk < %{version}
+Provides:       gitk = %{version}-%{release}
+Conflicts:      gitk
+
+%description gitk
 %{summary}.
 
-%package -n gitweb
+%package gitweb
 Summary:        Simple web interface to git repositories
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
-%description -n gitweb
+Requires:       %{name} = %{version}-%{release}
+Provides:       git-gitweb = %{version}-%{release}
+Conflicts:      git-gitweb < %{version}
+Provides:       gitweb = %{version}-%{release}
+Conflicts:      gitweb
+
+%description gitweb
 %{summary}.
 
 %package gui
 Summary:        Graphical interface to Git
 BuildArch:      noarch
-Requires:       gitk = %{version}-%{release}
+Requires:       %{name}-gitk = %{version}-%{release}
 Requires:       tk >= 8.4
+Provides:       git-gui = %{version}-%{release}
+Conflicts:      git-gui < %{version}
+
 %description gui
 %{summary}.
 
 %package instaweb
 Summary:        Repository browser in gitweb
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
-Requires:       gitweb = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}-gitweb = %{version}-%{release}
 Requires:       lighttpd
+Provides:       git-instaweb = %{version}-%{release}
+Conflicts:      git-instaweb < %{version}
 
 %description instaweb
 A simple script to set up gitweb and a web server for browsing the local
@@ -399,30 +444,46 @@ repository.
 Summary:        Git tools for working with Perforce depots
 BuildArch:      noarch
 BuildRequires:  python2-devel
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
+Provides:       git-p4 = %{version}-%{release}
+Conflicts:      git-p4 < %{version}
+
 %description p4
 %{summary}.
 %endif # with p4
 
-%package -n perl-Git
+%package perl-Git
 Summary:        Perl interface to Git
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-%description -n perl-Git
+Provides:       git-perl-Git = %{version}-%{release}
+Conflicts:      git-perl-Git < %{version}
+Provides:       perl-Git = %{version}-%{release}
+Conflicts:      perl-Git < %{version}
+
+%description perl-Git
 %{summary}.
 
-%package -n perl-Git-SVN
+%package perl-Git-SVN
 Summary:        Perl interface to Git::SVN
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-%description -n perl-Git-SVN
+Provides:       git-perl-Git-SVN = %{version}-%{release}
+Conflicts:      git-perl-Git-SVN < %{version}
+Provides:       perl-Git-SVN = %{version}-%{release}
+Conflicts:      perl-Git-SVN < %{version}
+
+%description perl-Git-SVN
 %{summary}.
 
 %package subtree
 Summary:        Git tools to merge and split repositories
-Requires:       git-core = %{version}-%{release}
+Requires:       %{name}-core = %{version}-%{release}
+Provides:       git-subtree = %{version}-%{release}
+Conflicts:      git-subtree < %{version}
+
 %description subtree
 Git subtrees allow subprojects to be included within a subdirectory
 of the main project, optionally including the subproject's entire
@@ -431,12 +492,15 @@ history.
 %package svn
 Summary:        Git tools for interacting with Subversion repositories
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 Requires:       perl(Digest::MD5)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif # ! defined perl_bootstrap
 Requires:       subversion
+Provides:       git-svn = %{version}-%{release}
+Conflicts:      git-svn < %{version}
+
 %description svn
 %{summary}.
 
@@ -884,7 +948,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-daemon*.html}
 
 %if ! %{emacs_filesystem}
-%files -n emacs-git
+%files emacs-git
 %{_pkgdocdir}/contrib/emacs/README
 %{elispdir}
 %endif # ! emacs_filesystem
@@ -895,14 +959,14 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_mandir}/man1/*email*.1*}
 %{?with_docs:%{_pkgdocdir}/*email*.html}
 
-%files -n gitk
+%files gitk
 %{_pkgdocdir}/*gitk*.txt
 %{_bindir}/*gitk*
 %{_datadir}/gitk
 %{?with_docs:%{_mandir}/man1/*gitk*.1*}
 %{?with_docs:%{_pkgdocdir}/*gitk*.html}
 
-%files -n gitweb
+%files gitweb
 %{_pkgdocdir}/*.gitweb
 %{_pkgdocdir}/gitweb*.txt
 %{?with_docs:%{_mandir}/man1/gitweb.1*}
@@ -940,10 +1004,10 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/*p4*.html}
 %endif # with p4
 
-%files -n perl-Git -f perl-git-files
+%files perl-Git -f perl-git-files
 %{?with_docs:%{_mandir}/man3/Git.3pm*}
 
-%files -n perl-Git-SVN -f perl-git-svn-files
+%files perl-Git-SVN -f perl-git-svn-files
 
 %files subtree
 %{gitexecdir}/git-subtree
@@ -958,6 +1022,11 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sun Mar 31 2019 Nico KAdel-Garcia <nkadel@gmail.com> - 2.21.0=0
+- Apply pkgname of git2u, srcname of git
+- Set all package to have pkgname prefix
+- Add matching Provides, Requires, and Conflicts to avoid conflict with default git pkgname
+
 * Sun Feb 24 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-1
 - Update to 2.21.0
 - Move gitweb manpages to gitweb package
