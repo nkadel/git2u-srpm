@@ -86,14 +86,17 @@
 # Define for release candidates
 #global rcrev   .rc0
 
-Name:           git
+%global pkgname git2u
+%global srcname git
+
+Name:           %{pkgname}
 Version:        2.21.0
-Release:        1%{?rcrev}%{?dist}
+Release:        0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
-Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.xz
-Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
+Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{srcname}-%{version}%{?rcrev}.tar.xz
+Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{srcname}-%{version}%{?rcrev}.tar.sign
 
 # Junio C Hamano's key is used to sign git releases, it can be found in the
 # junio-gpg-pub tag within git.
@@ -449,7 +452,7 @@ rm -rf "$gpghome" # Cleanup tmp gpg home dir
 
 # Ensure a blank line follows autosetup, el6 chokes otherwise
 # https://bugzilla.redhat.com/1310704
-%autosetup -p1 -n %{name}-%{version}%{?rcrev}
+%autosetup -p1 -n %{srcname}-%{version}%{?rcrev}
 
 # Install print-failed-test-output script
 install -p -m 755 %{SOURCE99} print-failed-test-output
@@ -485,7 +488,7 @@ PYTHON_PATH = %{__python2}
 %else
 NO_PYTHON = 1
 %endif # with python2
-htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
+htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{srcname}-%{version}}
 prefix = %{_prefix}
 perllibdir = %{perl_vendorlib}
 gitwebdir = %{_localstatedir}/www/git
@@ -694,7 +697,7 @@ fi
 popd >/dev/null
 
 # find translations
-%find_lang %{name} %{name}.lang
+%find_lang %{srcname} %{name}.lang
 cat %{name}.lang >> bin-man-doc-files
 
 # quiet some rpmlint complaints
