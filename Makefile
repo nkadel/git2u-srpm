@@ -16,7 +16,7 @@ RSYNCSAFEOPTS=$(RSYNCOPTS) --ignore-existing
 #MOCKS+=epel-7-i386
 #MOCKS+=epel-6-i386
 
-#MOCKS+=fedora-29-x86_64
+MOCKS+=fedora-29-x86_64
 MOCKS+=epel-7-x86_64
 MOCKS+=epel-6-x86_64
 
@@ -37,14 +37,13 @@ build:: srpm FORCE
 		--define "_topdir $(PWD)/rpmbuild" \
 		--rebuild rpmbuild/SRPMS/*.src.rpm
 
-$(MOCKS):: FORCE
+$(MOCKS):: srpm
 	@if [ -n "`find $@ -name \*.rpm ! -name \*.src.rpm 2>/dev/null`" ]; then \
 		echo "	Skipping $(SPEC) in $@ with RPMS"; \
 	else \
 		rm -rf $@; \
-		$(MAKE) srpm; \
 		echo "Storing " rpmbuild/SRPMS/*.src.rpm "as $@.src.rpm"; \
-		/bin/mv rpmbuild/SRPMS/*.src.rpm $@.src.rpm; \
+		rsync -a rpmbuild/SRPMS/*.src.rpm $@.src.rpm; \
 		echo "Building $@.src.rpm in $@"; \
 		rm -rf $@; \
 		/usr/bin/mock -q -r $@ \
