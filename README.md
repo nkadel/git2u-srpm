@@ -14,5 +14,3 @@ Run "make" to use "mock" to build the default designated RPM's in the
 local working directories such as epel-7-x86_64 and epel-6-x86_64.
 
        	  Nico Kadel-Garcia <nkadelgmail.com>
-
-	  
