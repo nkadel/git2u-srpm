@@ -575,13 +575,13 @@ cat config.mak
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}perl\\(Term::ReadKey\\)
 %endif # ! defined perl_bootstrap
 %else
-cat << \EOF > %{name}-req
+cat << \EOF > git-req
 #!/bin/sh
 %{__perl_requires} $* |\
 sed -e '/perl(packed-refs)/d'
 EOF
 
-%global __perl_requires %{_builddir}/%{name}-%{version}%{?rcrev}/%{name}-req
+%global __perl_requires %{_builddir}/%{srcname}-%{version}%{?rcrev}/git-req
 chmod +x %{__perl_requires}
 %endif # use_new_rpm_filters
 
