@@ -90,7 +90,7 @@
 %global srcname git
 
 Name:           %{pkgname}
-Version:        2.21.0
+Version:        2.23.0
 Release:        0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
