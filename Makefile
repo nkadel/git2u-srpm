@@ -12,11 +12,8 @@ RSYNCSAFEOPTS=$(RSYNCOPTS) --ignore-existing
 
 # "mock" configurations to build with, activate only as needed
 # fedora-28 is not availalbe on RHEL 6 version of mock
-#MOCKS+=fedora-29-i386
-#MOCKS+=epel-7-i386
-#MOCKS+=epel-6-i386
-
-MOCKS+=fedora-29-x86_64
+MOCKS+=fedora-30-x86_64
+MOCKS+=epel-8-x86_64
 MOCKS+=epel-7-x86_64
 MOCKS+=epel-6-x86_64
 
