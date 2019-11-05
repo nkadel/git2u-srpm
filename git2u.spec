@@ -90,7 +90,7 @@
 %global srcname git
 
 Name:           %{pkgname}
-Version:        2.23.0
+Version:        2.24.0
 Release:        0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -1022,7 +1022,10 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
-* Sun Mar 31 2019 Nico KAdel-Garcia <nkadel@gmail.com> - 2.21.0=0
+* Tue Nov 5 2019 Nico Kadel-Garcia <nkadel@gmail.com> - 2.24.0-0
+- Update to 2.24.0
+
+* Sun Mar 31 2019 Nico Kadel-Garcia <nkadel@gmail.com> - 2.21.0-0
 - Apply pkgname of git2u, srcname of git
 - Set all package to have pkgname prefix
 - Add matching Provides, Requires, and Conflicts to avoid conflict with default git pkgname
