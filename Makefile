@@ -12,7 +12,6 @@ RSYNCSAFEOPTS=$(RSYNCOPTS) --ignore-existing
 
 # "mock" configurations to build with, activate only as needed
 MOCKS+=fedora-31-x86_64
-MOCKS+=fedora-30-x86_64
 MOCKS+=epel-8-x86_64
 MOCKS+=epel-7-x86_64
 MOCKS+=epel-6-x86_64
