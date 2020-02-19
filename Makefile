@@ -11,53 +11,77 @@ RSYNCOPTS=-a --no-owner --no-group
 RSYNCSAFEOPTS=$(RSYNCOPTS) --ignore-existing 
 
 # "mock" configurations to build with, activate only as needed
-MOCKS+=fedora-31-x86_64
+#MOCKS+=fedora-31-x86_64
 MOCKS+=epel-8-x86_64
 MOCKS+=epel-7-x86_64
 MOCKS+=epel-6-x86_64
 
-SPEC = `ls *.spec`
+#REPOBASEDIR=/var/www/linux/gitrepo
+REPOBASEDIR:=`/bin/pwd`/../gitrepo
+
+SPEC := `ls *.spec | head -1`
 
 all:: $(MOCKS)
 
-srpm:: FORCE
-	@echo Building $(SPEC) SRPM
-	rm -rf rpmbuild
-	rpmbuild \
-		--define '_topdir $(PWD)/rpmbuild' \
+.PHONY: getsrc
+getsrc::
+	spectool -g $(SPEC)
+
+srpm:: src.rpm
+
+#.PHONY:: src.rpm
+src.rpm:: Makefile
+	@rm -rf rpmbuild
+	@rm -f $@
+	@echo "Building SRPM with $(SPEC)"
+	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
 		--define '_sourcedir $(PWD)' \
 		-bs $(SPEC) --nodeps
+	mv rpmbuild/SRPMS/*.src.rpm src.rpm
 
-build:: srpm FORCE
-	rpmbuild \
-		--define "_topdir $(PWD)/rpmbuild" \
-		--rebuild rpmbuild/SRPMS/*.src.rpm
+.PHONY: build
+build:: src.rpm
+	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
+		--rebuild $?
 
-$(MOCKS):: srpm
-	@if [ -n "`find $@ -name \*.rpm ! -name \*.src.rpm 2>/dev/null`" ]; then \
-		echo "	Skipping $(SPEC) in $@ with RPMS"; \
+.PHONY: $(MOCKS)
+$(MOCKS):: src.rpm
+	@if [ -e $@ -a -n "`find $@ -name \*.rpm`" ]; then \
+		echo "	Skipping RPM populated $@"; \
 	else \
+		echo "Actally building $? in $@"; \
 		rm -rf $@; \
-		echo "Storing " rpmbuild/SRPMS/*.src.rpm "as $@.src.rpm"; \
-		rsync -a rpmbuild/SRPMS/*.src.rpm $@.src.rpm; \
-		echo "Building $@.src.rpm in $@"; \
-		rm -rf $@; \
-		/usr/bin/mock -q -r $@ \
+		mock -q -r /etc/mock/$@.cfg \
 		     --resultdir=$(PWD)/$@ \
-		     $@.src.rpm; \
+		     $?; \
 	fi
 
 mock:: $(MOCKS)
 
 install:: $(MOCKS)
-	@echo $@ not enabled
+	@for repo in $(MOCKS); do \
+	    echo Installing $$repo; \
+	    case $$repo in \
+		*-7-x86_64) yumrelease=el/7; yumarch=x86_64; ;; \
+		*-8-x86_64) yumrelease=el/8; yumarch=x86_64; ;; \
+		*-31-x86_64) yumrelease=fedora/31; yumarch=x86_64; ;; \
+		*-f31-x86_64) yumrelease=fedora/31; yumarch=x86_64; ;; \
+		*-rawhide-x86_64) yumrelease=fedora/rawhide; yumarch=x86_64; ;; \
+		*) echo "Unrecognized release for $$repo, exiting" >&2; exit 1; ;; \
+	    esac; \
+	    rpmdir=$(REPOBASEDIR)/$$yumrelease/$$yumarch; \
+	    srpmdir=$(REPOBASEDIR)/$$yumrelease/SRPMS; \
+	    echo "    Pushing SRPMS to $$srpmdir"; \
+	    rsync -a $$repo/*.src.rpm --no-owner --no-group $$repo/*.src.rpm $$srpmdir/. || exit 1; \
+	    createrepo -q $$srpmdir/.; \
+	    echo "    Pushing RPMS to $$rpmdir"; \
+	    rsync -a $$repo/*.rpm --exclude=*.src.rpm --exclude=*debuginfo*.rpm --no-owner --no-group $$repo/*.rpm $$rpmdir/. || exit 1; \
+	    createrepo -q $$rpmdir/.; \
+	done
 
 clean::
-	rm -rf $(MOCKS)
-	rm -rf rpmbuild
 	rm -rf */
+	rm -f *.out
+	rm -f *.rpm
 
 realclean distclean:: clean
-	rm -f *.src.rpm
-
-FORCE:
