@@ -8,13 +8,6 @@
 
 # Settings for Fedora or EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
-%bcond_with                 python2
-%else
-%bcond_without              python2
-%endif
-
-# Settings for Fedora or EL > 7
-%if 0%{?fedora} || 0%{?rhel} > 7
 %global gitweb_httpd_conf   gitweb.conf
 %else
 %global gitweb_httpd_conf   git.conf
@@ -22,19 +15,21 @@
 
 # Settings for Fedora or EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
+%bcond_with                 python2
 %bcond_without              python3
 %global use_glibc_langpacks 1
 %global use_perl_generators 1
 %global use_perl_interpreter 1
 %else
+%bcond_without              python2
 %bcond_with                 python3
 %global use_glibc_langpacks 0
 %global use_perl_generators 0
 %global use_perl_interpreter 0
 %endif
 
-# Settings for Fedora or EL7
-%if 0%{?fedora} || 0%{?rhel} == 7
+# Settings for Fedora
+%if 0%{?fedora}
 %bcond_without              linkcheck
 %else
 %bcond_with                 linkcheck
@@ -665,7 +660,7 @@ popd >/dev/null
 install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
     %{buildroot}%{gitexecdir}
 %endif
-install -pm 755 contrib/credential/netrc/git-credential-netrc \
+install -pm 755 contrib/credential/netrc/git-credential-netrc.perl \
     %{buildroot}%{gitexecdir}
 # temporarily move contrib/credential/netrc aside to prevent it from being
 # deleted in the docs preparation, so the tests can be run in %%check
@@ -1031,6 +1026,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Thu Apr 23 2020 Nico Kadel-Garcia <nkadel@gmail.com> - 2.26.2-0
 - Update to 2.26.2
+- Copy over git-credential-netrc.perl to  git-credential-netrc
 
 * Wed Feb 19 2020 Nico Kadel-Garcia <nkadel@gmail.com> - 2.25.1-0
 - Update to 2.25.1
