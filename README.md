@@ -1,6 +1,6 @@
-SRPM tools for git 2.25.x
+SRPM tools for git 2.26.x
 
-This github repo includes tools for building git-2.23.x RPM's. It is
+This github repo includes tools for building git-2.26.x RPMs. It is
 based on the latest Fedora RPMs, with hooks for buiiding on Fedora and
 RHEL, and with modifications from iusrelease to bundle as "git2u", for
 separate installation from the standard "git" package and
