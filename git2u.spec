@@ -23,18 +23,23 @@
 # Settings for Fedora or EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without              python3
-# linkchcker is not available on EL <= 7
-%bcond_without              linkcheck
 %global use_glibc_langpacks 1
 %global use_perl_generators 1
 %global use_perl_interpreter 1
 %else
 %bcond_with                 python3
-%bcond_with                 linkcheck
 %global use_glibc_langpacks 0
 %global use_perl_generators 0
 %global use_perl_interpreter 0
 %endif
+
+# Settings for Fedora or EL7
+%if 0%{?fedora} || 0%{?rhel} == 7
+%bcond_without              linkcheck
+%else
+%bcond_with                 linkcheck
+%endif
+
 
 # Settings for Fedora or EL >= 7
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -90,7 +95,7 @@
 %global srcname git
 
 Name:           %{pkgname}
-Version:        2.25.1
+Version:        2.26.2
 Release:        0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -1024,6 +1029,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Apr 23 2020 Nico Kadel-Garcia <nkadel@gmail.com> - 2.26.2-0
+- Update to 2.26.2
+
 * Wed Feb 19 2020 Nico Kadel-Garcia <nkadel@gmail.com> - 2.25.1-0
 - Update to 2.25.1
 - Discard comments after %%endif statements for Fedora compatibility
